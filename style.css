@@ -1,0 +1,17 @@
+.board {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  width: 300px;
+}
+.square {
+  height: 100px;
+  width: 100px;
+}
+
+.left, .colmiddle {
+  border-right: solid 1px black;
+}
+
+.top, .rowmiddle {
+  border-bottom: solid 1px black;
+}
