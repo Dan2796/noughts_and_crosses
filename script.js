@@ -43,7 +43,10 @@ const displayController = (() => {
   const playerWins = (winner) => {
     console.log(`${winner.getName()} wins this round!`);
   };
-  return { refreshBoard, playerWins };
+  const draw = () => {
+    console.log('It\'s a draw!');
+  };
+  return { refreshBoard, playerWins, draw };
 })();
 
 const gameboard = (() => {
@@ -51,6 +54,7 @@ const gameboard = (() => {
   let xToMove;
   let playerWithX;
   let playerWithO;
+  let numberOfMarks;
   const getBoard = () => board;
   const resetGame = () => {
     board = [
@@ -59,6 +63,7 @@ const gameboard = (() => {
       [0, 0, 0],
     ];
     xToMove = true;
+    numberOfMarks = 0;
     playerWithX = Math.random() < 0.5 ? player1 : player2;
     playerWithO = player1 === playerWithX ? player2 : player1;
   };
@@ -68,6 +73,7 @@ const gameboard = (() => {
     board[row][col] = mark;
     displayController.refreshBoard(board);
     xToMove = !xToMove;
+    numberOfMarks += 1;
   };
   const checkArraySumsTarget = (array, target) => {
     const arraySum = array.reduce((accumulator, currentValue) => accumulator + currentValue, 0);
@@ -100,9 +106,13 @@ const gameboard = (() => {
       displayController.playerWins(winner);
       winner.addWin();
     }
+    if (numberOfMarks === 9) {
+      resetGame();
+      displayController.draw();
+    }
   };
   return {
-    getBoard, resetGame, markAndCheck, playerWithX, playerWithO,
+    getBoard, resetGame, markAndCheck, playerWithX, playerWithO, numberOfMarks,
   };
 })();
 
