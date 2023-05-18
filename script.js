@@ -10,9 +10,16 @@ const bottomright = document.getElementById('bottom-right');
 
 const player1Name = document.querySelector('.player1Name');
 const player1Tally = document.querySelector('.player1Tally');
+const player1Crosses = document.querySelector('.player1Crosses');
 const player2Name = document.querySelector('.player2Name');
 const player2Tally = document.querySelector('.player2Tally');
+const player2Crosses = document.querySelector('.player2Crosses');
 const winMessage = document.querySelector('.winMessage');
+
+const renameP1 = document.getElementById('renameP1');
+const renameP2 = document.getElementById('renameP2');
+
+const resetButton = document.querySelector('.resetButton');
 
 const Player = (playerName) => {
   let name = playerName;
@@ -30,17 +37,22 @@ const player1 = Player('Player 1');
 const player2 = Player('Player 2');
 
 const displayController = (() => {
+  const refreshPlayerText = (playerWithX) => {
+    player1Name.textContent = player1.getName();
+    player1Tally.textContent = player1.getWins();
+    player1Crosses.textContent = player1 === playerWithX ? 'X' : 'O';
+    player2Name.textContent = player2.getName();
+    player2Tally.textContent = player2.getWins();
+    player2Crosses.textContent = player2 === playerWithX ? 'X' : 'O';
+  };
   const chooseMark = (board, row, col) => {
     if (board[row][col] === 1) { return 'X'; }
     if (board[row][col] === -1) { return 'O'; }
     return '';
   };
-  const refreshPlayerText = () => {
-    player1Name.textContent = player1.getName();
-    player1Tally.textContent = player1.getWins();
-    player2Name.textContent = player2.getName();
-    player2Tally.textContent = player2.getWins();
-  };
+  /* Could just refresh the individual marks but need refreshBoard function anyway for when hitting
+     the restart button, so might as well just refresh each time a mark is made; the performance
+     is unlikely to be affected for a 3x3 grid. */
   const refreshBoard = (board) => {
     topleft.textContent = chooseMark(board, 0, 0);
     topmiddle.textContent = chooseMark(board, 0, 1);
@@ -52,31 +64,28 @@ const displayController = (() => {
     bottommiddle.textContent = chooseMark(board, 2, 1);
     bottomright.textContent = chooseMark(board, 2, 2);
   };
-  const showWhoIsX = (playerWithX) => {
-    winMessage.textContent = `${playerWithX.getName()} is crosses`;
-  };
   const playerWins = (winner) => {
     winMessage.textContent = (`${winner.getName()} wins this round!`);
-    refreshPlayerText();
   };
   const draw = () => {
     winMessage.textContent = 'It\'s a draw!';
-    refreshPlayerText();
+  };
+  const resetWinMessage = () => {
+    winMessage.textContent = '';
   };
   return {
-    refreshBoard, refreshPlayerText, showWhoIsX, playerWins, draw,
+    refreshBoard, refreshPlayerText, playerWins, draw, resetWinMessage,
   };
 })();
-
-displayController.refreshPlayerText();
 
 const gameboard = (() => {
   let board;
   let xToMove;
-  let playerWithX;
-  let playerWithO;
+  let playerWithX = player1;
+  let playerWithO = player2;
   let numberOfMarks;
   const getBoard = () => board;
+  const getPlayerWithX = () => playerWithX;
   const resetGame = () => {
     board = [
       [0, 0, 0],
@@ -85,16 +94,27 @@ const gameboard = (() => {
     ];
     xToMove = true;
     numberOfMarks = 0;
-    playerWithX = Math.random() < 0.5 ? player1 : player2;
-    playerWithO = player1 === playerWithX ? player2 : player1;
   };
   resetGame();
-  displayController.showWhoIsX(playerWithX);
+  displayController.refreshPlayerText(playerWithX);
+  // not part of reset because don't want to switch X on restart button, only on win / draw
+  const switchWhoIsX = () => {
+    if (player1 === playerWithX) {
+      playerWithX = player2;
+      playerWithO = player1;
+    } else {
+      playerWithX = player1;
+      playerWithO = player2;
+    }
+  };
   const addMark = (row, col) => {
     const mark = xToMove ? 1 : -1;
     board[row][col] = mark;
     displayController.refreshBoard(board);
-    if (numberOfMarks === 0) { displayController.showWhoIsX(playerWithX); }
+    // reset the win message if just starting again
+    if (numberOfMarks === 0) {
+      displayController.resetWinMessage();
+    }
     xToMove = !xToMove;
     numberOfMarks += 1;
   };
@@ -127,20 +147,21 @@ const gameboard = (() => {
       const winner = xToMove ? playerWithO : playerWithX;
       displayController.playerWins(winner);
       winner.addWin();
-      displayController.refreshPlayerText();
       resetGame();
+      switchWhoIsX();
+      displayController.refreshPlayerText(playerWithX);
     }
     if (numberOfMarks === 9) {
-      resetGame();
       displayController.draw();
+      resetGame();
+      switchWhoIsX();
+      displayController.refreshPlayerText(playerWithX);
     }
   };
   return {
-    getBoard, resetGame, markAndCheck, playerWithX, playerWithO, numberOfMarks,
+    getBoard, resetGame, markAndCheck, getPlayerWithX,
   };
 })();
-
-displayController.refreshBoard(gameboard.getBoard());
 
 topleft.addEventListener('click', () => gameboard.markAndCheck(0, 0));
 topmiddle.addEventListener('click', () => gameboard.markAndCheck(0, 1));
@@ -151,3 +172,24 @@ middleright.addEventListener('click', () => gameboard.markAndCheck(1, 2));
 bottomleft.addEventListener('click', () => gameboard.markAndCheck(2, 0));
 bottommiddle.addEventListener('click', () => gameboard.markAndCheck(2, 1));
 bottomright.addEventListener('click', () => gameboard.markAndCheck(2, 2));
+
+resetButton.addEventListener('click', () => {
+  gameboard.resetGame();
+  displayController.refreshBoard(gameboard.getBoard());
+});
+
+renameP1.addEventListener('click', () => {
+  const newName = prompt('Rename first player:');
+  if (newName != null) {
+    player1.setName(newName);
+  }
+  displayController.refreshPlayerText(gameboard.getPlayerWithX());
+});
+
+renameP2.addEventListener('click', () => {
+  const newName = prompt('Rename second player:');
+  if (newName != null) {
+    player2.setName(newName);
+  }
+  displayController.refreshPlayerText(gameboard.getPlayerWithX());
+});

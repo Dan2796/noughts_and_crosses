@@ -4,8 +4,8 @@
   width: 300px;
 }
 .square {
-  height: 100px;
   width: 100px;
+  height: 100px;
 }
 
 .left, .colmiddle {
@@ -14,4 +14,9 @@
 
 .top, .rowmiddle {
   border-bottom: solid 1px black;
+}
+
+.resetButton {
+  width: 100px;
+  height: 100px;
 }
