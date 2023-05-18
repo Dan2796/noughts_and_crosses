@@ -1,3 +1,13 @@
+const topleft = document.getElementById('top-left');
+const topmiddle = document.getElementById('top-middle');
+const topright = document.getElementById('top-right');
+const middleleft = document.getElementById('middle-left');
+const middlemiddle = document.getElementById('middle-middle');
+const middleright = document.getElementById('middle-right');
+const bottomleft = document.getElementById('bottom-left');
+const bottommiddle = document.getElementById('bottom-middle');
+const bottomright = document.getElementById('bottom-right');
+
 const Player = (playerName) => {
   let name = playerName;
   const setName = (newName) => { name = newName; };
@@ -14,10 +24,21 @@ const player1 = Player('Player 1');
 const player2 = Player('Player 2');
 
 const displayController = (() => {
+  const chooseMark = (board, row, col) => {
+    if (board[row][col] === 1) { return 'X'; }
+    if (board[row][col] === -1) { return 'O'; }
+    return '';
+  };
   const refreshBoard = (board) => {
-    for (let row = 0; row <= 2; row += 1) {
-      console.log(`${board[row][0]} | ${board[row][1]} | ${board[row][2]}`);
-    }
+    topleft.textContent = chooseMark(board, 0, 0);
+    topmiddle.textContent = chooseMark(board, 0, 1);
+    topright.textContent = chooseMark(board, 0, 2);
+    middleleft.textContent = chooseMark(board, 1, 0);
+    middlemiddle.textContent = chooseMark(board, 1, 1);
+    middleright.textContent = chooseMark(board, 1, 2);
+    bottomleft.textContent = chooseMark(board, 2, 0);
+    bottommiddle.textContent = chooseMark(board, 2, 1);
+    bottomright.textContent = chooseMark(board, 2, 2);
   };
   const playerWins = (winner) => {
     console.log(`${winner.getName()} wins this round!`);
@@ -27,7 +48,6 @@ const displayController = (() => {
 
 const gameboard = (() => {
   let board;
-  let gameOver;
   let xToMove;
   let playerWithX;
   let playerWithO;
@@ -38,7 +58,6 @@ const gameboard = (() => {
       [0, 0, 0],
       [0, 0, 0],
     ];
-    gameOver = false;
     xToMove = true;
     playerWithX = Math.random() < 0.5 ? player1 : player2;
     playerWithO = player1 === playerWithX ? player2 : player1;
@@ -71,12 +90,11 @@ const gameboard = (() => {
   };
   const markAndCheck = (row, col) => {
     // check game running and move is valid:
-    if (gameOver) { return; }
     if (row < 0 || row > 2 || col < 0 || col > 2) { return; }
     if (board[row][col] !== 0) { return; }
     addMark(row, col);
     if (checkWin()) {
-      gameOver = true;
+      resetGame();
       // Note that if X is to move then X has just lost because O must have just moved
       const winner = xToMove ? playerWithO : playerWithX;
       displayController.playerWins(winner);
@@ -84,8 +102,18 @@ const gameboard = (() => {
     }
   };
   return {
-    getBoard, resetGame, markAndCheck, playerWithX, playerWithO 
+    getBoard, resetGame, markAndCheck, playerWithX, playerWithO,
   };
 })();
 
 displayController.refreshBoard(gameboard.getBoard());
+
+topleft.addEventListener('click', () => gameboard.markAndCheck(0, 0));
+topmiddle.addEventListener('click', () => gameboard.markAndCheck(0, 1));
+topright.addEventListener('click', () => gameboard.markAndCheck(0, 2));
+middleleft.addEventListener('click', () => gameboard.markAndCheck(1, 0));
+middlemiddle.addEventListener('click', () => gameboard.markAndCheck(1, 1));
+middleright.addEventListener('click', () => gameboard.markAndCheck(1, 2));
+bottomleft.addEventListener('click', () => gameboard.markAndCheck(2, 0));
+bottommiddle.addEventListener('click', () => gameboard.markAndCheck(2, 1));
+bottomright.addEventListener('click', () => gameboard.markAndCheck(2, 2));
