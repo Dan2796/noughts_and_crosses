@@ -1,10 +1,17 @@
-const Player = (name) => {
+const Player = (playerName) => {
+  let name = playerName;
+  const setName = (newName) => { name = newName; };
   const getName = () => name;
   let wins = 0;
   const getWins = () => wins;
   const addWin = () => { wins += 1; };
-  return { getName, getWins, addWin };
+  return {
+    setName, getName, getWins, addWin,
+  };
 };
+
+const player1 = Player('Player 1');
+const player2 = Player('Player 2');
 
 const displayController = (() => {
   const refreshBoard = (board) => {
@@ -12,9 +19,8 @@ const displayController = (() => {
       console.log(`${board[row][0]} | ${board[row][1]} | ${board[row][2]}`);
     }
   };
-  const playerWins = (xToMove) => {
-    // Note that if X is to move then X has just lost because O must have just moved
-    console.log(`${xToMove ? 'Player O' : 'Player X'} wins this round!`);
+  const playerWins = (winner) => {
+    console.log(`${winner.getName()} wins this round!`);
   };
   return { refreshBoard, playerWins };
 })();
@@ -23,6 +29,8 @@ const gameboard = (() => {
   let board;
   let gameOver;
   let xToMove;
+  let playerWithX;
+  let playerWithO;
   const getBoard = () => board;
   const resetGame = () => {
     board = [
@@ -32,6 +40,8 @@ const gameboard = (() => {
     ];
     gameOver = false;
     xToMove = true;
+    playerWithX = Math.random() < 0.5 ? player1 : player2;
+    playerWithO = player1 === playerWithX ? player2 : player1;
   };
   resetGame();
   const addMark = (row, col) => {
@@ -67,10 +77,15 @@ const gameboard = (() => {
     addMark(row, col);
     if (checkWin()) {
       gameOver = true;
-      displayController.playerWins(xToMove);
+      // Note that if X is to move then X has just lost because O must have just moved
+      const winner = xToMove ? playerWithO : playerWithX;
+      displayController.playerWins(winner);
+      winner.addWin();
     }
   };
-  return { getBoard, resetGame, markAndCheck };
+  return {
+    getBoard, resetGame, markAndCheck, playerWithX, playerWithO 
+  };
 })();
 
 displayController.refreshBoard(gameboard.getBoard());
