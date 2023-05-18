@@ -8,6 +8,12 @@ const bottomleft = document.getElementById('bottom-left');
 const bottommiddle = document.getElementById('bottom-middle');
 const bottomright = document.getElementById('bottom-right');
 
+const player1Name = document.querySelector('.player1Name');
+const player1Tally = document.querySelector('.player1Tally');
+const player2Name = document.querySelector('.player2Name');
+const player2Tally = document.querySelector('.player2Tally');
+const winMessage = document.querySelector('.winMessage');
+
 const Player = (playerName) => {
   let name = playerName;
   const setName = (newName) => { name = newName; };
@@ -29,6 +35,12 @@ const displayController = (() => {
     if (board[row][col] === -1) { return 'O'; }
     return '';
   };
+  const refreshPlayerText = () => {
+    player1Name.textContent = player1.getName();
+    player1Tally.textContent = player1.getWins();
+    player2Name.textContent = player2.getName();
+    player2Tally.textContent = player2.getWins();
+  };
   const refreshBoard = (board) => {
     topleft.textContent = chooseMark(board, 0, 0);
     topmiddle.textContent = chooseMark(board, 0, 1);
@@ -40,14 +52,23 @@ const displayController = (() => {
     bottommiddle.textContent = chooseMark(board, 2, 1);
     bottomright.textContent = chooseMark(board, 2, 2);
   };
+  const showWhoIsX = (playerWithX) => {
+    winMessage.textContent = `${playerWithX.getName()} is crosses`;
+  };
   const playerWins = (winner) => {
-    console.log(`${winner.getName()} wins this round!`);
+    winMessage.textContent = (`${winner.getName()} wins this round!`);
+    refreshPlayerText();
   };
   const draw = () => {
-    console.log('It\'s a draw!');
+    winMessage.textContent = 'It\'s a draw!';
+    refreshPlayerText();
   };
-  return { refreshBoard, playerWins, draw };
+  return {
+    refreshBoard, refreshPlayerText, showWhoIsX, playerWins, draw,
+  };
 })();
+
+displayController.refreshPlayerText();
 
 const gameboard = (() => {
   let board;
@@ -68,10 +89,12 @@ const gameboard = (() => {
     playerWithO = player1 === playerWithX ? player2 : player1;
   };
   resetGame();
+  displayController.showWhoIsX(playerWithX);
   const addMark = (row, col) => {
     const mark = xToMove ? 1 : -1;
     board[row][col] = mark;
     displayController.refreshBoard(board);
+    if (numberOfMarks === 0) { displayController.showWhoIsX(playerWithX); }
     xToMove = !xToMove;
     numberOfMarks += 1;
   };
@@ -100,11 +123,12 @@ const gameboard = (() => {
     if (board[row][col] !== 0) { return; }
     addMark(row, col);
     if (checkWin()) {
-      resetGame();
       // Note that if X is to move then X has just lost because O must have just moved
       const winner = xToMove ? playerWithO : playerWithX;
       displayController.playerWins(winner);
       winner.addWin();
+      displayController.refreshPlayerText();
+      resetGame();
     }
     if (numberOfMarks === 9) {
       resetGame();
