@@ -10,36 +10,38 @@
 </head>
 <body>
   <h1>Noughts and Crosses</h1>
-  <div class="board">
-    <div class="square top left" id="top-left"></div>
-    <div class="square top colmiddle" id="top-middle"></div>
-    <div class="square top right" id="top-right"></div>
-    <div class="square rowmiddle left" id="middle-left"></div>
-    <div class="square rowmiddle colmiddle" id="middle-middle"></div>
-    <div class="square rowmiddle right" id="middle-right"></div>
-    <div class="square bottom left" id="bottom-left"></div>
-    <div class="square bottom colmiddle" id="bottom-middle"></div>
-    <div class="square bottom right" id="bottom-right"></div>
+  <div class="board-and-tallies">
+    <div class="board">
+      <div class="square top left" id="top-left"></div>
+      <div class="square top colmiddle" id="top-middle"></div>
+      <div class="square top right" id="top-right"></div>
+      <div class="square rowmiddle left" id="middle-left"></div>
+      <div class="square rowmiddle colmiddle" id="middle-middle"></div>
+      <div class="square rowmiddle right" id="middle-right"></div>
+      <div class="square bottom left" id="bottom-left"></div>
+      <div class="square bottom colmiddle" id="bottom-middle"></div>
+      <div class="square bottom right" id="bottom-right"></div>
+    </div>
+    <table class="tallies">
+      <thead>
+        <th></th>
+        <th>Player</th>
+        <th>Wins</th>
+        <th>Pieces</th>
+      <tr>
+        <th><button class="renameButton" id="renameP1">✎</button></th>
+        <th class="player1Name"></th>
+        <th class="player1Tally"></th>
+        <th class="player1Crosses"></th>
+      </tr>
+      <tr>
+        <th><button class="renameButton" id="renameP2">✎</button></th>
+        <th class="player2Name"></th>
+        <th class="player2Tally"></th>
+        <th class="player2Crosses"></th>
+      </tr>
+    </table>
   </div>
-  <table class="tallies">
-    <thead>
-      <th></th>
-      <th>Player</th>
-      <th>Wins</th>
-      <th>Pieces</th>
-    <tr>
-      <th><button class="renameButton" id="renameP1">Change name</button></th>
-      <th class="player1Name"></th>
-      <th class="player1Tally"></th>
-      <th class="player1Crosses"></th>
-    </tr>
-    <tr>
-      <th><button class="renameButton" id="renameP2">Change name</button></th>
-      <th class="player2Name"></th>
-      <th class="player2Tally"></th>
-      <th class="player2Crosses"></th>
-    </tr>
-  </table>
   <div class="winMessage"></div>
   <button class="resetButton">Restart</button>
 </body>

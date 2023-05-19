@@ -1,22 +1,71 @@
+body {
+  background-color: black;
+  color: greenyellow;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  font-family: monospace;
+  font-size: 1rem;
+}
+
+.board-and-tallies {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.tallies {
+  width: 300px;
+  height: 150px;
+  padding: 20px;
+}
+
 .board {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   width: 300px;
 }
+
 .square {
   width: 100px;
   height: 100px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: sans-serif;
+  font-size: 3rem;
 }
 
 .left, .colmiddle {
-  border-right: solid 1px black;
+  border-right: solid 1px greenyellow;
 }
 
 .top, .rowmiddle {
-  border-bottom: solid 1px black;
+  border-bottom: solid 1px greenyellow;
+}
+
+.winMessage {
+  margin: 15px;
 }
 
 .resetButton {
   width: 100px;
-  height: 100px;
+  height: 50px;
+}
+
+button {
+  background-color: black;
+  color: greenyellow;
+  border-color: greenyellow;
+  border-radius: 10px;
+}
+
+button:hover {
+  cursor: pointer;
+}
+
+.renameButton {
+  border: 0px;
 }
