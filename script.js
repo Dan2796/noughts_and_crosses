@@ -64,11 +64,11 @@ const displayController = (() => {
     bottommiddle.textContent = chooseMark(board, 2, 1);
     bottomright.textContent = chooseMark(board, 2, 2);
   };
-  const playerWins = (winner) => {
-    winMessage.textContent = (`${winner.getName()} wins this round!`);
+  const playerWins = (winner, playerWithX) => {
+    winMessage.textContent = (`${winner.getName()} wins this round! ${playerWithX.getName()} to start the next:`);
   };
-  const draw = () => {
-    winMessage.textContent = 'It\'s a draw!';
+  const draw = (playerWithX) => {
+    winMessage.textContent = `It's a draw! ${playerWithX.getName()} to start the next:`;
   };
   const resetWinMessage = () => {
     winMessage.textContent = '';
@@ -145,16 +145,16 @@ const gameboard = (() => {
     if (checkWin()) {
       // Note that if X is to move then X has just lost because O must have just moved
       const winner = xToMove ? playerWithO : playerWithX;
-      displayController.playerWins(winner);
+      switchWhoIsX();
+      displayController.playerWins(winner, playerWithX);
       winner.addWin();
       resetGame();
-      switchWhoIsX();
       displayController.refreshPlayerText(playerWithX);
     }
     if (numberOfMarks === 9) {
-      displayController.draw();
-      resetGame();
       switchWhoIsX();
+      displayController.draw(playerWithX);
+      resetGame();
       displayController.refreshPlayerText(playerWithX);
     }
   };
